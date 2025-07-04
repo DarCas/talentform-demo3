@@ -1,0 +1,41 @@
+Table orders {
+	id integer [ pk, increment, not null ]
+	user_id integer [ not null ]
+	product_id integer [ not null ]
+	qty smallint [ not null ]
+	insert_date datetime [ not null, default: CURRENT_TIMESTAMP ]
+}
+
+Table users {
+	id integer [ pk, increment, not null ]
+	nickname varchar [ not null, unique ]
+	usernm varchar [ not null, unique, note: 'E-Mail' ]
+	passwd varchar [ not null, note: 'SHA1' ]
+	data_iscrizione datetime [ not null, default: CURRENT_TIMESTAMP ]
+	stato tinyint [ not null, default: 1, note: '0 = Disattivato, 1 = Attivato' ]
+}
+
+Table users_access {
+	user_id integer [ pk, not null ]
+	ip_address varchar
+	user_agent varchar [ not null ]
+	data_ultimo_accesso datetime [ not null, default: CURRENT_TIMESTAMP ]
+}
+
+Table products {
+	id integer [ pk, increment, not null ]
+	description varchar [ not null ]
+	price decimal [ not null ]
+}
+
+Ref fk_orders_product_id_products {
+	orders.product_id > products.id [ delete: restrict, update: no action ]
+}
+
+Ref fk_users_access_user_id_users {
+	users_access.user_id > users.id [ delete: cascade, update: no action ]
+}
+
+Ref fk_orders_user_id_users {
+	orders.user_id > users.id [ delete: restrict, update: no action ]
+}
